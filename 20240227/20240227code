@@ -1,21 +1,38 @@
-import requests
-from bs4 import BeautifulSoup
+#https://news.ltn.com.tw/rss/all.xml
+import feedparser
 
-# 1. 使用 requests.get 來發送 HTTP GET 請求，獲取網頁內容
-response = requests.get('https://www.cwa.gov.tw/rss/forecast/36_05.xml')
+# 1. 使用 feedparser.parse 來解析 RSS feed
+feed = feedparser.parse('https://news.ltn.com.tw/rss/all.xml')
 
-# 2. 使用 BeautifulSoup 來解析網頁內容
-soup = BeautifulSoup(response.text, 'xml')
-
-# 3. 使用 BeautifulSoup 的 find_all 方法來找到所有的 item 標籤
-items = soup.find_all('item')
-
-for item in items:
-    # 4. 對於每個 item，使用 find 方法來找到 title 和 description 標籤
-    title = item.find('title').text
-    description = item.find('description').text
-
-    # 5. 印出 title 和 description 的內容
-    print(f"Title: {title}")
-    print(f"Description: {description}")
+# 2. feed.entries 包含了所有的新聞項目或氣象報告
+for entry in feed.entries:
+    # 3. 每個 entry 都是一個字典，包含了 title, link, description 等欄位
+    print(f"Title: {entry['title']}")
+    print(f"Description: {entry['description']}")
     print("------\n")
+#幫我把所有資料輸出成1個excel檔
+import csv
+with open('news.csv', 'w', newline='', encoding='utf-8') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(['Title', 'Description'])
+    for entry in feed.entries:
+        writer.writerow([entry['title'], entry['description']])
+    csvfile.close()
+
+
+    # 幫我把所有資料輸出成1個excel檔
+    #import csv
+    #with open('news.csv', 'w', newline='', encoding='utf-8') as csvfile:
+    #    writer = csv.writer(csvfile)
+    #    writer.writerow(['Title', 'Description'])
+    #    writer.writerow([entry['title'], entry['description']])
+    #    csvfile.close()
+
+
+    
+    
+
+    
+    
+    
+    
