@@ -1,0 +1,30 @@
+import requests
+from bs4 import BeautifulSoup
+import re
+
+def parse_web(url):
+    # 1. 使用 requests.get 來發送 HTTP GET 請求，獲取網頁內容
+    response = requests.get(url)
+    
+    # 2. 使用 BeautifulSoup 來解析網頁內容
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # 3. 使用 BeautifulSoup 的 find_all 方法來找到所有的 item 標籤
+    items = soup.find_all('item')
+    
+    for item in items:
+        # 4. 對於每個 item，使用 find 方法來找到 title 和 description 標籤
+        title = item.find('title').text
+        description = item.find('description').text
+        print(f"Title: {title}")
+
+        # 5. 使用正則表達式來找到每小時的溫度和降雨機率的資訊
+        hourly_data_matches = re.findall(r'(\d{2}:\d{2}) 溫度：(\d+)度，降雨機率：(\d+)%', description)
+        for match in hourly_data_matches:
+            time, temperature, rainfall = match
+            print(f"Time: {time}, Temperature: {temperature} degrees, Rainfall probability: {rainfall}%")
+
+        print("------\n")
+
+# 使用您的 RSS feed URL 替換以下的 'your_rss_feed_url'
+parse_web('https://www.cwa.gov.tw/rss/forecast/36_05.xml')
