@@ -1,4 +1,5 @@
 # crawler from rss of central weather agency
+#pip install
 
 import requests
 import xml.etree.ElementTree as ET
